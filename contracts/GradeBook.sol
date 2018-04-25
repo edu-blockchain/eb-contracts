@@ -63,14 +63,15 @@ contract GradeBook is Ownable {
     return evaluationsByRecorder[recorder].length;
   }
 
-//  function getEvaluation(address recorder, uint index) public view returns (uint, uint, uint8, uint8, uint8, uint8, uint8) {
-//    Evaluation storage evalu = evaluationsByRecorder[recorder][index];
-//    return(evalu.studentID,
-//           evalu.activity,
-//           evalu.complexity,
-//           evalu.effort,
-//           evalu.weight,
-//           evalu.points,
-//           evalu.weightedPoints);
-//  }
+  // Retrieve an evaluation record for a recorder at a given zero-based index
+  function getEvaluation(address recorder, uint index) public view returns (uint studentID, uint activity, uint8 complexity, uint8 effort, uint8 weight, uint8 points, uint8 weightedPoints) {
+    Evaluation storage evalu = evaluationsByRecorder[recorder][index];
+    return(evalu.studentID,
+           evalu.activity,
+           evalu.complexity,
+           evalu.effort,
+           evalu.weight,
+           evalu.points,
+           evalu.weightedPoints);
+  }
 }

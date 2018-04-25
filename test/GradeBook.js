@@ -10,6 +10,10 @@ const should = require('chai') // eslint-disable-line no-unused-vars
   .use(require('chai-bignumber')(BigNumber))
   .should();
 
+function norm(decimal) {
+  return new web3.BigNumber(decimal * 10);
+}
+
 contract('GradeBook', (accounts) => {
   const creator = accounts[0];
   const owner = accounts[1];
@@ -29,10 +33,23 @@ contract('GradeBook', (accounts) => {
     it('should record grades', async () => {
       for(let i in testData) {
         let rec = testData[i];
-        await gradeBook.recordEvaluation(rec.id_alumno, rec.id_oa, rec.complejidad_oa, rec.esfuerzo_oa, rec.peso_oa, rec.puntos, rec.puntos_pond, { from: evaluator });
+        await gradeBook.recordEvaluation(rec.id_alumno, rec.id_oa,
+                                         norm(rec.complejidad_oa),
+                                         norm(rec.esfuerzo_oa),
+                                         norm(rec.peso_oa),
+                                         norm(rec.puntos),
+                                         norm(rec.puntos_pond), { from: evaluator });
         (await gradeBook.getEvaluationCount(evaluator)).toNumber().should.be.equal(parseInt(i)+1);
         let id = (await gradeBook.getStudentID(rec.id_alumno)).toNumber();
         (await gradeBook.getStudentIDText(id)).should.be.equal(web3.fromAscii(rec.id_alumno));
+        let result = await gradeBook.getEvaluation(evaluator, parseInt(i));
+        result[0].toNumber().should.be.equal(id);
+        result[1].toNumber().should.be.equal(rec.id_oa);
+        result[2].should.be.bignumber.equal(norm(rec.complejidad_oa));
+        result[3].should.be.bignumber.equal(norm(rec.esfuerzo_oa));
+        result[4].should.be.bignumber.equal(norm(rec.peso_oa));
+        result[5].should.be.bignumber.equal(norm(rec.puntos));
+        result[6].should.be.bignumber.equal(norm(rec.puntos_pond));
       }
     });
   });
