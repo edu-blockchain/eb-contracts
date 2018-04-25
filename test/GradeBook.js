@@ -33,15 +33,19 @@ contract('GradeBook', (accounts) => {
     it('should record grades', async () => {
       for(let i in testData) {
         let rec = testData[i];
+        // record the evaluation
         await gradeBook.recordEvaluation(rec.id_alumno, rec.id_oa,
                                          norm(rec.complejidad_oa),
                                          norm(rec.esfuerzo_oa),
                                          norm(rec.peso_oa),
                                          norm(rec.puntos),
                                          norm(rec.puntos_pond), { from: evaluator });
+        // check that the number of evaluations for this evaluator is correct
         (await gradeBook.getEvaluationCount(evaluator)).toNumber().should.be.equal(parseInt(i)+1);
+        // check that the student ID was assigned correctly
         let id = (await gradeBook.getStudentID(rec.id_alumno)).toNumber();
         (await gradeBook.getStudentIDText(id)).should.be.equal(web3.fromAscii(rec.id_alumno));
+        // pull out the evaulation recorded and make sure it all matches
         let result = await gradeBook.getEvaluation(evaluator, parseInt(i));
         result[0].toNumber().should.be.equal(id);
         result[1].toNumber().should.be.equal(rec.id_oa);
