@@ -27,11 +27,11 @@ contract('GradeBook', (accounts) => {
 
   context('grade recording', () => {
     it('should record grades', async () => {
-      for(var i in testData) {
-        var rec = testData[i];
+      for(let i in testData) {
+        let rec = testData[i];
         await gradeBook.recordEvaluation(rec.id_alumno, rec.id_oa, rec.complejidad_oa, rec.esfuerzo_oa, rec.peso_oa, rec.puntos, rec.puntos_pond, { from: evaluator });
         (await gradeBook.getEvaluationCount(evaluator)).toNumber().should.be.equal(parseInt(i)+1);
-        var id = (await gradeBook.getStudentID(rec.id_alumno)).toNumber();
+        let id = (await gradeBook.getStudentID(rec.id_alumno)).toNumber();
         (await gradeBook.getStudentIDText(id)).should.be.equal(web3.fromAscii(rec.id_alumno));
       }
     });
