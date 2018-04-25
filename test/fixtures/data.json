@@ -1,0 +1,164 @@
+[
+  {
+    "id_alumno": "niub20025563",
+    "id_oa": 11,
+    "complejidad_oa": 9,
+    "esfuerzo_oa": 4.2,
+    "peso_oa": 2.2,
+    "puntos": 8,
+    "puntos_pond": 5.1
+  },
+  {
+    "id_alumno": "niub20025563",
+    "id_oa": 35,
+    "complejidad_oa": 4.9,
+    "esfuerzo_oa": 2.6,
+    "peso_oa": 8.9,
+    "puntos": 0.7,
+    "puntos_pond": 3
+  },
+  {
+    "id_alumno": "niub20025563",
+    "id_oa": 36,
+    "complejidad_oa": 9.6,
+    "esfuerzo_oa": 8.3,
+    "peso_oa": 8,
+    "puntos": 9.5,
+    "puntos_pond": 8.8
+  },
+  {
+    "id_alumno": "niub20025563",
+    "id_oa": 61,
+    "complejidad_oa": 7.3,
+    "esfuerzo_oa": 9.8,
+    "peso_oa": 6.9,
+    "puntos": 2.4,
+    "puntos_pond": 5.9
+  },
+  {
+    "id_alumno": "niub20075753",
+    "id_oa": 11,
+    "complejidad_oa": 9,
+    "esfuerzo_oa": 4.2,
+    "peso_oa": 2.2,
+    "puntos": 8,
+    "puntos_pond": 5.1
+  },
+  {
+    "id_alumno": "niub20075753",
+    "id_oa": 23,
+    "complejidad_oa": 2.2,
+    "esfuerzo_oa": 5.8,
+    "peso_oa": 1.2,
+    "puntos": 5.8,
+    "puntos_pond": 3
+  },
+  {
+    "id_alumno": "niub20075753",
+    "id_oa": 35,
+    "complejidad_oa": 4.9,
+    "esfuerzo_oa": 2.6,
+    "peso_oa": 8.9,
+    "puntos": 0.7,
+    "puntos_pond": 3
+  },
+  {
+    "id_alumno": "niub20075753",
+    "id_oa": 36,
+    "complejidad_oa": 9.6,
+    "esfuerzo_oa": 8.3,
+    "peso_oa": 8,
+    "puntos": 9.5,
+    "puntos_pond": 8.8
+  },
+  {
+    "id_alumno": "niub20075753",
+    "id_oa": 62,
+    "complejidad_oa": 7.5,
+    "esfuerzo_oa": 9.4,
+    "peso_oa": 0.9,
+    "puntos": 3.1,
+    "puntos_pond": 3.7
+  },
+  {
+    "id_alumno": "niub20075753",
+    "id_oa": 66,
+    "complejidad_oa": 3.5,
+    "esfuerzo_oa": 2.3,
+    "peso_oa": 9.4,
+    "puntos": 3.4,
+    "puntos_pond": 4
+  },
+  {
+    "id_alumno": "niub20075753",
+    "id_oa": 81,
+    "complejidad_oa": 1,
+    "esfuerzo_oa": 9.7,
+    "peso_oa": 9.8,
+    "puntos": 7,
+    "puntos_pond": 5.1
+  },
+  {
+    "id_alumno": "niub20100006",
+    "id_oa": 11,
+    "complejidad_oa": 9,
+    "esfuerzo_oa": 4.2,
+    "peso_oa": 2.2,
+    "puntos": 8,
+    "puntos_pond": 5.1
+  },
+  {
+    "id_alumno": "niub20100006",
+    "id_oa": 22,
+    "complejidad_oa": 8.7,
+    "esfuerzo_oa": 6.9,
+    "peso_oa": 0.2,
+    "puntos": 4.7,
+    "puntos_pond": 2.7
+  },
+  {
+    "id_alumno": "niub20100006",
+    "id_oa": 35,
+    "complejidad_oa": 4.9,
+    "esfuerzo_oa": 2.6,
+    "peso_oa": 8.9,
+    "puntos": 0.7,
+    "puntos_pond": 3
+  },
+  {
+    "id_alumno": "niub20100006",
+    "id_oa": 36,
+    "complejidad_oa": 9.6,
+    "esfuerzo_oa": 8.3,
+    "peso_oa": 8,
+    "puntos": 9.5,
+    "puntos_pond": 8.8
+  },
+  {
+    "id_alumno": "niub20100006",
+    "id_oa": 65,
+    "complejidad_oa": 2.3,
+    "esfuerzo_oa": 1.9,
+    "peso_oa": 6.6,
+    "puntos": 4.1,
+    "puntos_pond": 3.3
+  },
+  {
+    "id_alumno": "niub20100006",
+    "id_oa": 81,
+    "complejidad_oa": 1,
+    "esfuerzo_oa": 9.7,
+    "peso_oa": 9.8,
+    "puntos": 7,
+    "puntos_pond": 5.1
+  },
+  {
+    "id_alumno": "niub20100006",
+    "id_oa": 84,
+    "complejidad_oa": 2.2,
+    "esfuerzo_oa": 8.5,
+    "peso_oa": 2.9,
+    "puntos": 1.5,
+    "puntos_pond": 3
+  }
+]
