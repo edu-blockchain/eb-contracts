@@ -3,7 +3,7 @@
 const Alerter = artifacts.require('../contracts/Recorder.sol');
 const expectThrow = require('./helpers/expectThrow.js');
 const BigNumber = require('bignumber.js');
-const testData = require('./fixtures/data.json');
+const testData = require('./fixtures/test_data.json');
 
 const should = require('chai') // eslint-disable-line no-unused-vars
   .use(require('chai-as-promised'))
