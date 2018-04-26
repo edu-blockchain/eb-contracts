@@ -8,6 +8,7 @@ contract GradeBook is Ownable {
   event EvaluationRecorded(uint indexed recorderID, uint indexed studentID, uint indexed activity); 
 
   struct Evaluation {
+    uint  recorderID;
     uint  studentID;
     uint  activity;
     uint8 complexity;
@@ -67,13 +68,13 @@ contract GradeBook is Ownable {
     return recorders[recorderID-1];
   }
 
-  function makeRecorderID(address recorder) public returns (uint) {
+  function makeRecorderID(address recorder) internal returns (uint) {
     uint recorderID = getRecorderID(recorder);
-    if(recorderID == 0) {
+    if( 0 == recorderID ) {
       recorders.push(recorder);
       recorderCount = recorderCount + 1;
+      recorderByAddress[recorder] = recorderCount;
       recorderID = recorderCount;
-      recorderByAddress[recorder] = recorderID;
     }
     return recorderID;
   }
@@ -84,7 +85,7 @@ contract GradeBook is Ownable {
     // look up the Recorder ID. If none exists, assign one.
     uint recorderID = makeRecorderID(msg.sender);
 
-    evaluationsByRecorder[recorderID].push(Evaluation(studentID, activity, complexity, effort, weight, points, weightedPoints));
+    evaluationsByRecorder[recorderID].push(Evaluation(recorderID, studentID, activity, complexity, effort, weight, points, weightedPoints));
 
     emit EvaluationRecorded(recorderID, studentID, activity);
   }
