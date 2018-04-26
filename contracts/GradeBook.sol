@@ -5,7 +5,7 @@ import "./Ownable.sol";
 
 contract GradeBook is Ownable {
 
-  event EvaluationRecorded(address indexed recorder, uint indexed studentID, uint indexed activity); 
+  event EvaluationRecorded(uint indexed recorderID, uint indexed studentID, uint indexed activity); 
 
   struct Evaluation {
     uint  studentID;
@@ -17,55 +17,89 @@ contract GradeBook is Ownable {
     uint8 weightedPoints;
   }
 
-//  modifier onlyValidAlertType(uint id) {
-//    require(id < alertTypes.length);
-//    _;
-//  }
+  modifier onlyValidStudentID(uint studentID) {
+    require(studentID <= studentCount);
+    _;
+  }
 
   mapping(bytes => uint) internal studentByID;
   bytes[] internal students;
   uint internal studentCount;
 
-  mapping(address => Evaluation[]) internal evaluationsByRecorder;
+  mapping(uint => Evaluation[]) internal evaluationsByRecorder;
 
-//  address[] internal recorders;
-//  uint internal recorderCount;
+  mapping(address => uint) internal recorderByAddress;
+  address[] internal recorders;
+  uint internal recorderCount;
 
-  constructor() public {
+
+  function GradeBook() public {
     studentCount = 0;
- //   recorderCount = 0;
+    recorderCount = 0;
   }
 
+  // Retrieve the student ID based on the text-based student identifier
+  // "zero" means the student is not recorded in the system.
   function getStudentID(bytes idText) public view returns (uint) {
     return studentByID[idText];
   }
 
+  // Retrieve the text-based student identifier based on the student ID
   function getStudentIDText(uint studentID) public view returns (bytes) {
     // studentID is one-based, array is zero-based
     return students[studentID-1];
   }
 
-  function recordEvaluation(bytes idText, uint activity, uint8 complexity, uint8 effort, uint8 weight, uint8 points, uint8 weightedPoints) public {
-    uint studentID = studentByID[idText];
+  function makeStudentID(bytes idText) public returns (uint) {
+    // Look up the student ID. If none exists, assign one.
+    uint studentID = getStudentID(idText);
     if(studentID == 0) {
       students.push(idText);
       studentCount = studentCount + 1;
       studentID = studentCount;
       studentByID[idText] = studentID;
     }
-
-    evaluationsByRecorder[msg.sender].push(Evaluation(studentID, activity, complexity, effort, weight, points, weightedPoints));
-
-    emit EvaluationRecorded(msg.sender, studentID, activity);
+    return studentID;
   }
 
-  function getEvaluationCount(address recorder) public view returns (uint) {
-    return evaluationsByRecorder[recorder].length;
+  function getRecorderID(address recorder) public view returns (uint) {
+    return recorderByAddress[recorder];
+  }
+
+  function getRecorderAddress(uint recorderID) public view returns (address) {
+    return recorders[recorderID-1];
+  }
+
+  function makeRecorderID(address recorder) public returns (uint) {
+    uint recorderID = getRecorderID(recorder);
+    if(recorderID == 0) {
+      recorders.push(recorder);
+      recorderCount = recorderCount + 1;
+      recorderID = recorderCount;
+      recorderByAddress[recorder] = recorderID;
+    }
+    return recorderID;
+  }
+
+  // Record an evaluation
+  function recordEvaluation(uint studentID, uint activity, uint8 complexity, uint8 effort, uint8 weight, uint8 points, uint8 weightedPoints) public onlyValidStudentID(studentID) {
+
+    // look up the Recorder ID. If none exists, assign one.
+    uint recorderID = makeRecorderID(msg.sender);
+
+    evaluationsByRecorder[recorderID].push(Evaluation(studentID, activity, complexity, effort, weight, points, weightedPoints));
+
+    emit EvaluationRecorded(recorderID, studentID, activity);
+  }
+
+  // Retrieve the number of evaluations for the recorder
+  function getEvaluationCount(uint recorderID) public view returns (uint) {
+    return evaluationsByRecorder[recorderID].length;
   }
 
   // Retrieve an evaluation record for a recorder at a given zero-based index
-  function getEvaluation(address recorder, uint index) public view returns (uint studentID, uint activity, uint8 complexity, uint8 effort, uint8 weight, uint8 points, uint8 weightedPoints) {
-    Evaluation storage evalu = evaluationsByRecorder[recorder][index];
+  function getEvaluation(uint recorderID, uint index) public view returns (uint studentID, uint activity, uint8 complexity, uint8 effort, uint8 weight, uint8 points, uint8 weightedPoints) {
+    Evaluation storage evalu = evaluationsByRecorder[recorderID][index];
     return(evalu.studentID,
            evalu.activity,
            evalu.complexity,
