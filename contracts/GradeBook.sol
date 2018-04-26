@@ -51,15 +51,12 @@ contract GradeBook is Ownable {
   }
 
   function makeStudentID(bytes idText) public returns (uint) {
-    // Look up the student ID. If none exists, assign one.
-    uint studentID = getStudentID(idText);
-    if(studentID == 0) {
-      students.push(idText);
-      studentCount = studentCount + 1;
-      studentID = studentCount;
-      studentByID[idText] = studentID;
-    }
-    return studentID;
+    // must not already exist
+    require(0 == getStudentID(idText));
+    students.push(idText);
+    studentCount = studentCount + 1;
+    studentByID[idText] = studentCount;
+    return studentCount;
   }
 
   function getRecorderID(address recorder) public view returns (uint) {

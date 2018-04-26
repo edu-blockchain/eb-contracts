@@ -70,7 +70,17 @@ contract('GradeBook', (accounts) => {
         result[6].should.be.bignumber.equal(norm(rec.puntos_pond));
       }
     });
+
+    it('should not record grades when the student ID is invalid', async () => {
+        await expectThrow( gradeBook.recordEvaluation(999, 0, 0, 0, 0, 0, 0, {from: evaluator}));
+    });
+
+    it('should not allow adding the same student twice', async () => {
+        await gradeBook.makeStudentID('duplo', { from: evaluator });
+        await expectThrow( gradeBook.makeStudentID('duplo', { from: evaluator }));
+    });
   });
+
   context('grade retrieval', () => {
     it('should retrieve all grades for a given student', async () => {
 //        await gradeBook.getEvaluationCount();
