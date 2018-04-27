@@ -5,7 +5,7 @@ import "./Ownable.sol";
 
 contract GradeBook is Ownable {
 
-  event EvaluationRecorded(uint indexed recorderID, uint indexed studentID, uint evaluationID, uint indexed activity); 
+  event EvaluationRecorded(uint indexed recorderID, uint indexed studentID, uint indexed activity, uint evaluationID); 
 
   struct Evaluation {
     uint  recorderID;
@@ -98,7 +98,12 @@ contract GradeBook is Ownable {
     evaluationsByRecorderID[recorderID].push(evaluationID);
     evaluationsByStudentID[studentID].push(evaluationID);
 
-    emit EvaluationRecorded(recorderID, studentID, evaluationID, activity);
+    emit EvaluationRecorded(recorderID, studentID, activity, evaluationID);
+  }
+
+  // Retrieve the total number of evaluations
+  function getEvaluationCount() public view returns (uint) {
+    return evaluations.length;
   }
 
   // Retrieve the number of evaluations by the recorder

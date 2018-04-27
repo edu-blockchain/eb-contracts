@@ -10,7 +10,7 @@ const should = require('chai') // eslint-disable-line no-unused-vars
   .use(require('chai-bignumber')(BigNumber))
   .should();
 
-// decimal grade 7.4 becomes 74 (stored as uint8 on chain)
+// decimal grade 7.4 becomes 74 (stored as uint8 on chain, max 255)
 function norm(decimal) {
   return new web3.BigNumber(decimal * 10);
 }
@@ -50,15 +50,27 @@ contract('GradeBook', (accounts) => {
         (await gradeBook.getStudentIDText(studentID)).should.be.equal(web3.fromAscii(rec.id_alumno));
 
         // record the evaluation
-        await gradeBook.recordEvaluation(studentID, rec.id_oa,
-                                         norm(rec.complejidad_oa),
-                                         norm(rec.esfuerzo_oa),
-                                         norm(rec.peso_oa),
-                                         norm(rec.puntos),
-                                         norm(rec.puntos_pond), { from: evaluator });
+        let record = await gradeBook.recordEvaluation(studentID, rec.id_oa,
+                                                      norm(rec.complejidad_oa),
+                                                      norm(rec.esfuerzo_oa),
+                                                      norm(rec.peso_oa),
+                                                      norm(rec.puntos),
+                                                      norm(rec.puntos_pond),
+                                                      { from: evaluator });
 
+        // There should have been an event emitted, and the data should match
+        record.logs[0].event.should.be.equal('EvaluationRecorded');
+        record.logs[0].args.studentID.toNumber().should.be.equal(studentID);
+        record.logs[0].args.activity.toNumber().should.be.equal(rec.id_oa);
+        record.logs[0].args.evaluationID.toNumber().should.be.equal(recIndex);
+
+        // Check the recorder ID created during the recording above
         let recorderID = (await gradeBook.getRecorderID(evaluator)).toNumber();
         (await gradeBook.getRecorderAddress(recorderID)).should.be.equal(evaluator);
+        record.logs[0].args.recorderID.toNumber().should.be.equal(recorderID);
+
+        // total number of evaluations should be correct
+        (await gradeBook.getEvaluationCount()).toNumber().should.be.equal(recIndex + 1);
 
         // check that the number of evaluations by this evaluator is correct
         (await gradeBook.getEvaluationCountByRecorderID(recorderID)).toNumber().should.be.equal(recIndex + 1);
