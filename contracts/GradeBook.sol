@@ -27,11 +27,13 @@ contract GradeBook is Ownable {
   bytes[] internal students;
   uint internal studentCount;
 
-  mapping(uint => Evaluation[]) internal evaluationsByRecorder;
-
   mapping(address => uint) internal recorderByAddress;
   address[] internal recorders;
   uint internal recorderCount;
+
+  Evaluation[] public evaluations;
+  mapping(uint => uint[]) internal evaluationsByStudentID;
+  mapping(uint => uint[]) internal evaluationsByRecorderID;
 
 
   function GradeBook() public {
@@ -85,19 +87,21 @@ contract GradeBook is Ownable {
     // look up the Recorder ID. If none exists, assign one.
     uint recorderID = makeRecorderID(msg.sender);
 
-    evaluationsByRecorder[recorderID].push(Evaluation(recorderID, studentID, activity, complexity, effort, weight, points, weightedPoints));
+    evaluations.push(Evaluation(recorderID, studentID, activity, complexity, effort, weight, points, weightedPoints));
+    evaluationsByRecorderID[recorderID].push(evaluations.length-1);
+    evaluationsByStudentID[studentID].push(evaluations.length-1);
 
     emit EvaluationRecorded(recorderID, studentID, activity);
   }
 
   // Retrieve the number of evaluations for the recorder
   function getEvaluationCount(uint recorderID) public view returns (uint) {
-    return evaluationsByRecorder[recorderID].length;
+    return evaluationsByRecorderID[recorderID].length;
   }
 
   // Retrieve an evaluation record for a recorder at a given zero-based index
   function getEvaluation(uint recorderID, uint index) public view returns (uint studentID, uint activity, uint8 complexity, uint8 effort, uint8 weight, uint8 points, uint8 weightedPoints) {
-    Evaluation storage evalu = evaluationsByRecorder[recorderID][index];
+    Evaluation storage evalu = evaluations[evaluationsByRecorderID[recorderID][index]];
     return(evalu.studentID,
            evalu.activity,
            evalu.complexity,
