@@ -5,7 +5,7 @@ import "./Ownable.sol";
 
 contract GradeBook is Ownable {
 
-  event EvaluationRecorded(uint indexed recorderID, uint indexed studentID, uint indexed activity); 
+  event EvaluationRecorded(uint indexed recorderID, uint indexed studentID, uint evaluationID, uint indexed activity); 
 
   struct Evaluation {
     uint  recorderID;
@@ -67,6 +67,7 @@ contract GradeBook is Ownable {
   }
 
   function getRecorderAddress(uint recorderID) public view returns (address) {
+    // recorderID is one-based, array is zero-based
     return recorders[recorderID-1];
   }
 
@@ -88,10 +89,11 @@ contract GradeBook is Ownable {
     uint recorderID = makeRecorderID(msg.sender);
 
     evaluations.push(Evaluation(recorderID, studentID, activity, complexity, effort, weight, points, weightedPoints));
-    evaluationsByRecorderID[recorderID].push(evaluations.length-1);
-    evaluationsByStudentID[studentID].push(evaluations.length-1);
+    uint evaluationID = evaluations.length - 1;
+    evaluationsByRecorderID[recorderID].push(evaluationID);
+    evaluationsByStudentID[studentID].push(evaluationID);
 
-    emit EvaluationRecorded(recorderID, studentID, activity);
+    emit EvaluationRecorded(recorderID, studentID, evaluationID, activity);
   }
 
   // Retrieve the number of evaluations for the recorder
@@ -99,10 +101,22 @@ contract GradeBook is Ownable {
     return evaluationsByRecorderID[recorderID].length;
   }
 
-  // Retrieve an evaluation record for a recorder at a given zero-based index
-  function getEvaluation(uint recorderID, uint index) public view returns (uint studentID, uint activity, uint8 complexity, uint8 effort, uint8 weight, uint8 points, uint8 weightedPoints) {
+  // Retrieve an evaluation by a recorder at a given zero-based index
+  function getEvaluationByRecorderID(uint recorderID, uint index) public view returns (uint studentID, uint activity, uint8 complexity, uint8 effort, uint8 weight, uint8 points, uint8 weightedPoints) {
     Evaluation storage evalu = evaluations[evaluationsByRecorderID[recorderID][index]];
     return(evalu.studentID,
+           evalu.activity,
+           evalu.complexity,
+           evalu.effort,
+           evalu.weight,
+           evalu.points,
+           evalu.weightedPoints);
+  }
+
+  // Retrieve an evaluation for a student at a given zero-based index
+  function getEvaluationByStudentID(uint studentID, uint index) public view returns (uint recorderID, uint activity, uint8 complexity, uint8 effort, uint8 weight, uint8 points, uint8 weightedPoints) {
+    Evaluation storage evalu = evaluations[evaluationsByStudentID[studentID][index]];
+    return(evalu.recorderID,
            evalu.activity,
            evalu.complexity,
            evalu.effort,

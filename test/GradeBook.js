@@ -31,6 +31,7 @@ contract('GradeBook', (accounts) => {
 
   context('grade recording', () => {
     it('should record grades', async () => {
+      let studentIndex = 0;
       for(let i in testData) {
         let rec = testData[i];
         
@@ -41,6 +42,10 @@ contract('GradeBook', (accounts) => {
           // studentID = (await gradeBook.makeStudentID(rec.id_alumno)).toNumber();
           await gradeBook.makeStudentID(rec.id_alumno, { from: evaluator });
           studentID = (await gradeBook.getStudentID(rec.id_alumno)).toNumber();
+          studentIndex = 0;
+        }
+        else {
+          studentIndex++;
         }
 
         (await gradeBook.getStudentIDText(studentID)).should.be.equal(web3.fromAscii(rec.id_alumno));
@@ -60,14 +65,23 @@ contract('GradeBook', (accounts) => {
         (await gradeBook.getEvaluationCount(recorderID)).toNumber().should.be.equal(parseInt(i)+1);
 
         // pull out the evaulation recorded and make sure it all matches
-        let result = await gradeBook.getEvaluation(recorderID, parseInt(i));
-        result[0].toNumber().should.be.equal(studentID);
-        result[1].toNumber().should.be.equal(rec.id_oa);
-        result[2].should.be.bignumber.equal(norm(rec.complejidad_oa));
-        result[3].should.be.bignumber.equal(norm(rec.esfuerzo_oa));
-        result[4].should.be.bignumber.equal(norm(rec.peso_oa));
-        result[5].should.be.bignumber.equal(norm(rec.puntos));
-        result[6].should.be.bignumber.equal(norm(rec.puntos_pond));
+        // check via Recorder and via Student ID
+        let result1 = await gradeBook.getEvaluationByRecorderID(recorderID, parseInt(i));
+        let result2 = await gradeBook.getEvaluationByStudentID(studentID, studentIndex);
+        result1[0].toNumber().should.be.equal(studentID);
+        result2[0].toNumber().should.be.equal(recorderID);
+        result1[1].toNumber().should.be.equal(rec.id_oa);
+        result2[1].toNumber().should.be.equal(rec.id_oa);
+        result1[2].should.be.bignumber.equal(norm(rec.complejidad_oa));
+        result2[2].should.be.bignumber.equal(norm(rec.complejidad_oa));
+        result1[3].should.be.bignumber.equal(norm(rec.esfuerzo_oa));
+        result2[3].should.be.bignumber.equal(norm(rec.esfuerzo_oa));
+        result1[4].should.be.bignumber.equal(norm(rec.peso_oa));
+        result2[4].should.be.bignumber.equal(norm(rec.peso_oa));
+        result1[5].should.be.bignumber.equal(norm(rec.puntos));
+        result2[5].should.be.bignumber.equal(norm(rec.puntos));
+        result1[6].should.be.bignumber.equal(norm(rec.puntos_pond));
+        result2[6].should.be.bignumber.equal(norm(rec.puntos_pond));
       }
     });
 
@@ -78,12 +92,6 @@ contract('GradeBook', (accounts) => {
     it('should not allow adding the same student twice', async () => {
         await gradeBook.makeStudentID('duplo', { from: evaluator });
         await expectThrow( gradeBook.makeStudentID('duplo', { from: evaluator }));
-    });
-  });
-
-  context('grade retrieval', () => {
-    it('should retrieve all grades for a given student', async () => {
-//        await gradeBook.getEvaluationCount();
     });
   });
 });
