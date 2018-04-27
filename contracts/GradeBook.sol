@@ -71,24 +71,29 @@ contract GradeBook is Ownable {
     return recorders[recorderID-1];
   }
 
-  function makeRecorderID(address recorder) internal returns (uint) {
-    uint recorderID = getRecorderID(recorder);
-    if( 0 == recorderID ) {
-      recorders.push(recorder);
-      recorderCount = recorderCount + 1;
-      recorderByAddress[recorder] = recorderCount;
-      recorderID = recorderCount;
-    }
-    return recorderID;
-  }
-
   // Record an evaluation
-  function recordEvaluation(uint studentID, uint activity, uint8 complexity, uint8 effort, uint8 weight, uint8 points, uint8 weightedPoints) public onlyValidStudentID(studentID) {
+  function recordEvaluation(
+    uint studentID,
+    uint activity,
+    uint8 complexity,
+    uint8 effort,
+    uint8 weight,
+    uint8 points,
+    uint8 weightedPoints) public onlyValidStudentID(studentID)
+    {
 
     // look up the Recorder ID. If none exists, assign one.
-    uint recorderID = makeRecorderID(msg.sender);
+    uint recorderID = makeRecorderID();
 
-    evaluations.push(Evaluation(recorderID, studentID, activity, complexity, effort, weight, points, weightedPoints));
+    evaluations.push(Evaluation(
+      recorderID,
+      studentID,
+      activity,
+      complexity,
+      effort,
+      weight,
+      points,
+      weightedPoints));
     uint evaluationID = evaluations.length - 1;
     evaluationsByRecorderID[recorderID].push(evaluationID);
     evaluationsByStudentID[studentID].push(evaluationID);
@@ -96,32 +101,38 @@ contract GradeBook is Ownable {
     emit EvaluationRecorded(recorderID, studentID, evaluationID, activity);
   }
 
-  // Retrieve the number of evaluations for the recorder
-  function getEvaluationCount(uint recorderID) public view returns (uint) {
+  // Retrieve the number of evaluations by the recorder
+  function getEvaluationCountByRecorderID(uint recorderID) public view returns (uint) {
     return evaluationsByRecorderID[recorderID].length;
+  }
+
+  // Retrieve the number of evaluations for the student
+  function getEvaluationCountByStudentID(uint studentID) public view returns (uint) {
+    return evaluationsByStudentID[studentID].length;
   }
 
   // Retrieve an evaluation by a recorder at a given zero-based index
   function getEvaluationByRecorderID(uint recorderID, uint index) public view returns (uint studentID, uint activity, uint8 complexity, uint8 effort, uint8 weight, uint8 points, uint8 weightedPoints) {
     Evaluation storage evalu = evaluations[evaluationsByRecorderID[recorderID][index]];
-    return(evalu.studentID,
-           evalu.activity,
-           evalu.complexity,
-           evalu.effort,
-           evalu.weight,
-           evalu.points,
-           evalu.weightedPoints);
+    return(evalu.studentID, evalu.activity, evalu.complexity, evalu.effort, evalu.weight, evalu.points, evalu.weightedPoints);
   }
 
   // Retrieve an evaluation for a student at a given zero-based index
   function getEvaluationByStudentID(uint studentID, uint index) public view returns (uint recorderID, uint activity, uint8 complexity, uint8 effort, uint8 weight, uint8 points, uint8 weightedPoints) {
     Evaluation storage evalu = evaluations[evaluationsByStudentID[studentID][index]];
-    return(evalu.recorderID,
-           evalu.activity,
-           evalu.complexity,
-           evalu.effort,
-           evalu.weight,
-           evalu.points,
-           evalu.weightedPoints);
+    return(evalu.recorderID, evalu.activity, evalu.complexity, evalu.effort, evalu.weight, evalu.points, evalu.weightedPoints);
+  }
+
+  // Internal function for the generation of a recorder ID. The recorder is the sender
+  // of the transaction, is not otherwise modifiable, which is why this is internal only.
+  function makeRecorderID() internal returns (uint) {
+    uint recorderID = getRecorderID(msg.sender);
+    if ( 0 == recorderID ) {
+      recorders.push(msg.sender);
+      recorderCount = recorderCount + 1;
+      recorderByAddress[msg.sender] = recorderCount;
+      recorderID = recorderCount;
+    }
+    return recorderID;
   }
 }
