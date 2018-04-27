@@ -7,6 +7,8 @@ contract GradeBook is Ownable {
 
   event EvaluationRecorded(uint indexed recorderID, uint indexed studentID, uint indexed activity, uint evaluationID); 
 
+  // The core evaluation method. The order is important because the optimizer
+  // crams together the smaller fields in storage.
   struct Evaluation {
     uint  recorderID;
     uint  studentID;
@@ -23,19 +25,26 @@ contract GradeBook is Ownable {
     _;
   }
 
+  // student IDs mapped to the external unique identifier
+  // this is normalized to minimize the size of the evaluations array.
   mapping(bytes => uint) internal studentByID;
   bytes[] internal students;
   uint internal studentCount;
 
+  // recorder IDs mapped to the Ethereum address which recorded them
+  // this is normalized to minimize the size of the evaluations array.
   mapping(address => uint) internal recorderByAddress;
   address[] internal recorders;
   uint internal recorderCount;
 
+  // evaluations stored in a public array
+  // accessible through the implicit evaluations() function.
+  // and mapped from student and recorder
   Evaluation[] public evaluations;
   mapping(uint => uint[]) internal evaluationsByStudentID;
   mapping(uint => uint[]) internal evaluationsByRecorderID;
 
-
+  // Constructor
   function GradeBook() public {
     studentCount = 0;
     recorderCount = 0;
@@ -53,6 +62,8 @@ contract GradeBook is Ownable {
     return students[studentID-1];
   }
 
+  // Public function to establish an internal student ID which corresponds
+  // to an external student ID (which must be unique).
   function makeStudentID(bytes idText) public returns (uint) {
     // must not already exist
     require(0 == getStudentID(idText));
@@ -62,16 +73,21 @@ contract GradeBook is Ownable {
     return studentCount;
   }
 
+  // Get the internal recorder ID which corresponds to the Ethereum address
+  // of the recorder.
   function getRecorderID(address recorder) public view returns (uint) {
     return recorderByAddress[recorder];
   }
 
+  // get the Ethereum address which corresponds to the internal recorder ID
   function getRecorderAddress(uint recorderID) public view returns (address) {
     // recorderID is one-based, array is zero-based
     return recorders[recorderID-1];
   }
 
-  // Record an evaluation
+  // Record an evaluation. The only restriction is that the student ID must be valid;
+  // otherwise, *anyone* can create an evaluation with any values for any activity,
+  // real or imaginary, legit or bogus.
   function recordEvaluation(
     uint studentID,
     uint activity,
@@ -85,6 +101,7 @@ contract GradeBook is Ownable {
     // look up the Recorder ID. If none exists, assign one.
     uint recorderID = makeRecorderID();
 
+    // Store the evaluation in the public evaluations array
     evaluations.push(Evaluation(
       recorderID,
       studentID,
@@ -94,10 +111,14 @@ contract GradeBook is Ownable {
       weight,
       points,
       weightedPoints));
+
+    // Add the evaluation to the maps so it can be looked up by the student
+    // or by the recoder
     uint evaluationID = evaluations.length - 1;
     evaluationsByRecorderID[recorderID].push(evaluationID);
     evaluationsByStudentID[studentID].push(evaluationID);
 
+    // Send an event for this evaluation
     emit EvaluationRecorded(recorderID, studentID, activity, evaluationID);
   }
 
