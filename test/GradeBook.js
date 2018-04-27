@@ -1,5 +1,7 @@
 /* eslint-env node, mocha */
 /* eslint no-unused-expressions: 0 */
+/* eslint no-await-in-loop: 0 */
+/* eslint prefer-const: 0 */
 const GradeBook = artifacts.require('../contracts/GradeBook.sol');
 const expectThrow = require('./helpers/expectThrow.js');
 const BigNumber = require('bignumber.js');
@@ -18,6 +20,7 @@ function norm(decimal) {
 contract('GradeBook', (accounts) => {
   const owner = accounts[1];
   const evaluator = accounts[2];
+  var gradeBook; // eslint-disable-line no-var
 
   before(async () => {
     gradeBook = await GradeBook.new();
@@ -30,9 +33,9 @@ contract('GradeBook', (accounts) => {
   context('grade recording', () => {
     it('should record grades', async () => {
       let studentIndex = 0;
-      for (let i in testData) {
+      for (let i in testData) { // eslint-disable-line
         let rec = testData[i];
-        let recIndex = parseInt(i);
+        let recIndex = parseInt(i); // eslint-disable-line
 
         // get the student ID or make one
         let studentID = (await gradeBook.getStudentID(rec.id_alumno)).toNumber();
@@ -42,21 +45,21 @@ contract('GradeBook', (accounts) => {
           await gradeBook.makeStudentID(rec.id_alumno, { from: evaluator });
           studentID = (await gradeBook.getStudentID(rec.id_alumno)).toNumber();
           studentIndex = 0;
-        }
-        else {
-          studentIndex++;
+        } else {
+          studentIndex += 1;
         }
 
         (await gradeBook.getStudentIDText(studentID)).should.be.equal(web3.fromAscii(rec.id_alumno));
 
         // record the evaluation
-        let record = await gradeBook.recordEvaluation(studentID, rec.id_oa,
-                                                      norm(rec.complejidad_oa),
-                                                      norm(rec.esfuerzo_oa),
-                                                      norm(rec.peso_oa),
-                                                      norm(rec.puntos),
-                                                      norm(rec.puntos_pond),
-                                                      { from: evaluator });
+        let record = await gradeBook.recordEvaluation(
+          studentID, rec.id_oa,
+          norm(rec.complejidad_oa),
+          norm(rec.esfuerzo_oa),
+          norm(rec.peso_oa),
+          norm(rec.puntos),
+          norm(rec.puntos_pond),
+          { from: evaluator }); // eslint-disable-line function-paren-newline
 
         // There should have been an event emitted, and the data should match
         record.logs[0].event.should.be.equal('EvaluationRecorded');
@@ -78,9 +81,8 @@ contract('GradeBook', (accounts) => {
         // check that the number of evaluations for this student is correct
         (await gradeBook.getEvaluationCountByStudentID(studentID)).toNumber().should.be.equal(studentIndex + 1);
 
-        // pull out the evaulation recorded by the three methods
-        // and make sure they all match 
-        // check all evaluations, via Recorder and via Student ID
+        // compare the evaluation recorded with the three retrieval methods:
+        // all evaluations, via Recorder ID, and via Student ID
         let result0 = await gradeBook.evaluations(recIndex);
         let result1 = await gradeBook.getEvaluationByRecorderID(recorderID, recIndex);
         let result2 = await gradeBook.getEvaluationByStudentID(studentID, studentIndex);
@@ -112,12 +114,12 @@ contract('GradeBook', (accounts) => {
     });
 
     it('should not record grades when the student ID is invalid', async () => {
-      await expectThrow( gradeBook.recordEvaluation(999, 0, 0, 0, 0, 0, 0, {from: evaluator}));
+      await expectThrow(gradeBook.recordEvaluation(999, 0, 0, 0, 0, 0, 0, { from: evaluator }));
     });
 
     it('should not allow adding the same student twice', async () => {
       await gradeBook.makeStudentID('duplo', { from: evaluator });
-      await expectThrow( gradeBook.makeStudentID('duplo', { from: evaluator }));
+      await expectThrow(gradeBook.makeStudentID('duplo', { from: evaluator }));
     });
   });
 });
