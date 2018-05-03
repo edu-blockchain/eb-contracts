@@ -45,7 +45,7 @@ contract GradeBook is Ownable {
   mapping(uint => uint[]) internal evaluationsByRecorderID;
 
   // Constructor
-  function GradeBook() public {
+  constructor() public {
     studentCount = 0;
     recorderCount = 0;
   }
@@ -138,13 +138,17 @@ contract GradeBook is Ownable {
   }
 
   // Retrieve an evaluation by a recorder at a given zero-based index
-  function getEvaluationByRecorderID(uint recorderID, uint index) public view returns (uint studentID, uint activity, uint8 complexity, uint8 effort, uint8 weight, uint8 points, uint8 weightedPoints) {
+  function getEvaluationByRecorderID(uint recorderID, uint index) public view
+    returns (uint studentID, uint activity, uint8 complexity, uint8 effort, uint8 weight, uint8 points, uint8 weightedPoints)
+  {
     Evaluation storage evalu = evaluations[evaluationsByRecorderID[recorderID][index]];
     return(evalu.studentID, evalu.activity, evalu.complexity, evalu.effort, evalu.weight, evalu.points, evalu.weightedPoints);
   }
 
   // Retrieve an evaluation for a student at a given zero-based index
-  function getEvaluationByStudentID(uint studentID, uint index) public view returns (uint recorderID, uint activity, uint8 complexity, uint8 effort, uint8 weight, uint8 points, uint8 weightedPoints) {
+  function getEvaluationByStudentID(uint studentID, uint index) public view
+    returns (uint recorderID, uint activity, uint8 complexity, uint8 effort, uint8 weight, uint8 points, uint8 weightedPoints)
+  {
     Evaluation storage evalu = evaluations[evaluationsByStudentID[studentID][index]];
     return(evalu.recorderID, evalu.activity, evalu.complexity, evalu.effort, evalu.weight, evalu.points, evalu.weightedPoints);
   }
