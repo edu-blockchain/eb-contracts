@@ -45,7 +45,7 @@ contract GradeBook is Ownable {
   mapping(uint => uint[]) internal evaluationsByRecorderID;
 
   // Constructor
-  constructor() public {
+  function GradeBook() public {
     studentCount = 0;
     recorderCount = 0;
   }
