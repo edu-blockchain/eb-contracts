@@ -1,6 +1,6 @@
 {
   "name": "eb-contracts",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Edu-Blockchain smart contracts",
   "main": "truffle-config.js",
   "directories": {
@@ -25,7 +25,7 @@
     "solium": "^1.1.7",
     "truffle": "^4.1.11",
     "webpack": "^4.0.0",
-    "zeppelin-solidity": "^1.9.0"
+    "openzeppelin-solidity": "^1.9.0"
   },
   "scripts": {
     "build": "./node_modules/.bin/truffle compile",

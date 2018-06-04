@@ -1,3 +1,4 @@
 module.exports = {
-      skipFiles: ['Ownable.sol']
+    skipFiles: [],
+    copyNodeModules: true
 };

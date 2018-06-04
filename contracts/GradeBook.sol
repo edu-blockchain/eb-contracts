@@ -1,6 +1,6 @@
 pragma solidity ^0.4.21;
 
-import "./Ownable.sol";
+import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 
 
 contract GradeBook is Ownable {
