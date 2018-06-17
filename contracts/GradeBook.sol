@@ -1,9 +1,7 @@
 pragma solidity ^0.4.21;
 
-import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 
-
-contract GradeBook is Ownable {
+contract GradeBook {
 
   event EvaluationRecorded(uint32 indexed recorderID, uint32 indexed studentID, uint32 indexed activity, uint64 evaluationID); 
 

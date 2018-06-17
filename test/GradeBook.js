@@ -18,13 +18,11 @@ function norm(decimal) {
 }
 
 contract('GradeBook', (accounts) => {
-  const owner = accounts[1];
-  const evaluator = accounts[2];
+  const evaluator = accounts[1];
   var gradeBook; // eslint-disable-line no-var
 
   before(async () => {
     gradeBook = await GradeBook.new();
-    await gradeBook.transferOwnership(owner);
   });
 
   beforeEach(async () => {
