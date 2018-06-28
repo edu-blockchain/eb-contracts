@@ -1,6 +1,6 @@
 {
   "name": "eb-contracts",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "edublocs smart contracts",
   "main": "truffle-config.js",
   "directories": {
@@ -18,13 +18,13 @@
     "coveralls": "^3.0.1",
     "eslint": "^4.19.1",
     "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.12.0",
+    "eslint-plugin-import": "^2.13.0",
     "sol-merger": "^0.1.2",
     "solc": "^0.4.24",
     "solidity-coverage": "^0.5.4",
     "solium": "^1.1.7",
-    "truffle": "^4.1.11",
-    "webpack": "^4.12.0"
+    "truffle": "^4.1.13",
+    "webpack": "^4.13.0"
   },
   "scripts": {
     "build": "./node_modules/.bin/truffle compile",

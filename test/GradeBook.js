@@ -47,6 +47,7 @@ contract('GradeBook', (accounts) => {
           studentIndex += 1;
         }
 
+        (await gradeBook.getStudentCount()).toNumber().should.be.equal(studentID);
         (await gradeBook.getStudentIDText(studentID)).should.be.equal(web3.fromAscii(rec.id_alumno));
 
         // record the evaluation

@@ -48,6 +48,11 @@ contract GradeBook {
     recorderCount = 0;
   }
 
+  // Retrieve the number of student identifiers defined
+  function getStudentCount() public view returns (uint32) {
+    return studentCount;
+  }
+
   // Retrieve the student ID based on the text-based student identifier
   // "zero" means the student is not recorded in the system.
   function getStudentID(bytes idText) public view returns (uint32) {
