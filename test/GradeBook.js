@@ -85,30 +85,39 @@ contract('GradeBook', (accounts) => {
         let result0 = await gradeBook.evaluations(recIndex);
         let result1 = await gradeBook.getEvaluationByRecorderID(recorderID, recIndex);
         let result2 = await gradeBook.getEvaluationByStudentID(studentID, studentIndex);
+        let result3 = await gradeBook.getEvaluation(recIndex);
         // Orders are different because ByRecorder and ByStudent don't return the
         // fields they are queried by, and `evaluations` returns all fields
         result0[0].toNumber().should.be.equal(recorderID);
         result2[0].toNumber().should.be.equal(recorderID);
+        result3[0].toNumber().should.be.equal(recorderID);
         result0[1].toNumber().should.be.equal(studentID);
         result1[0].toNumber().should.be.equal(studentID);
+        result3[2].toNumber().should.be.equal(studentID);
         result0[2].toNumber().should.be.equal(rec.id_oa);
-        result1[1].toNumber().should.be.equal(rec.id_oa);
-        result2[1].toNumber().should.be.equal(rec.id_oa);
+        result1[2].toNumber().should.be.equal(rec.id_oa);
+        result2[2].toNumber().should.be.equal(rec.id_oa);
+        result3[4].toNumber().should.be.equal(rec.id_oa);
         result0[3].should.be.bignumber.equal(norm(rec.complejidad_oa));
-        result1[2].should.be.bignumber.equal(norm(rec.complejidad_oa));
-        result2[2].should.be.bignumber.equal(norm(rec.complejidad_oa));
+        result1[3].should.be.bignumber.equal(norm(rec.complejidad_oa));
+        result2[3].should.be.bignumber.equal(norm(rec.complejidad_oa));
+        result3[5].should.be.bignumber.equal(norm(rec.complejidad_oa));
         result0[4].should.be.bignumber.equal(norm(rec.esfuerzo_oa));
-        result1[3].should.be.bignumber.equal(norm(rec.esfuerzo_oa));
-        result2[3].should.be.bignumber.equal(norm(rec.esfuerzo_oa));
+        result1[4].should.be.bignumber.equal(norm(rec.esfuerzo_oa));
+        result2[4].should.be.bignumber.equal(norm(rec.esfuerzo_oa));
+        result3[6].should.be.bignumber.equal(norm(rec.esfuerzo_oa));
         result0[5].should.be.bignumber.equal(norm(rec.peso_oa));
-        result1[4].should.be.bignumber.equal(norm(rec.peso_oa));
-        result2[4].should.be.bignumber.equal(norm(rec.peso_oa));
+        result1[5].should.be.bignumber.equal(norm(rec.peso_oa));
+        result2[5].should.be.bignumber.equal(norm(rec.peso_oa));
+        result3[7].should.be.bignumber.equal(norm(rec.peso_oa));
         result0[6].should.be.bignumber.equal(norm(rec.puntos));
-        result1[5].should.be.bignumber.equal(norm(rec.puntos));
-        result2[5].should.be.bignumber.equal(norm(rec.puntos));
+        result1[6].should.be.bignumber.equal(norm(rec.puntos));
+        result2[6].should.be.bignumber.equal(norm(rec.puntos));
+        result3[8].should.be.bignumber.equal(norm(rec.puntos));
         result0[7].should.be.bignumber.equal(norm(rec.puntos_pond));
-        result1[6].should.be.bignumber.equal(norm(rec.puntos_pond));
-        result2[6].should.be.bignumber.equal(norm(rec.puntos_pond));
+        result1[7].should.be.bignumber.equal(norm(rec.puntos_pond));
+        result2[7].should.be.bignumber.equal(norm(rec.puntos_pond));
+        result3[9].should.be.bignumber.equal(norm(rec.puntos_pond));
       }
     });
 

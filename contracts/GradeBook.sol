@@ -141,19 +141,53 @@ contract GradeBook {
   }
 
   // Retrieve an evaluation by a recorder at a given zero-based index
+  function getEvaluation(uint64 index) public view
+    returns (uint32 recorderID, address recorderAddress, uint32 studentID, bytes studentIDText, uint32 activity, uint8 complexity, uint8 effort, uint8 weight, uint8 points, uint8 weightedPoints)
+  {
+    Evaluation storage evalu = evaluations[index];
+    return(
+      evalu.recorderID,
+      getRecorderAddress(evalu.recorderID),
+      evalu.studentID,
+      getStudentIDText(evalu.studentID),
+      evalu.activity,
+      evalu.complexity,
+      evalu.effort,
+      evalu.weight,
+      evalu.points,
+      evalu.weightedPoints);
+  }
+
+  // Retrieve an evaluation by a recorder at a given zero-based index
   function getEvaluationByRecorderID(uint32 recorderID, uint64 index) public view
-    returns (uint32 studentID, uint32 activity, uint8 complexity, uint8 effort, uint8 weight, uint8 points, uint8 weightedPoints)
+    returns (uint32 studentID, bytes studentIDText, uint32 activity, uint8 complexity, uint8 effort, uint8 weight, uint8 points, uint8 weightedPoints)
   {
     Evaluation storage evalu = evaluations[evaluationsByRecorderID[recorderID][index]];
-    return(evalu.studentID, evalu.activity, evalu.complexity, evalu.effort, evalu.weight, evalu.points, evalu.weightedPoints);
+    return(
+      evalu.studentID,
+      getStudentIDText(evalu.studentID),
+      evalu.activity,
+      evalu.complexity,
+      evalu.effort,
+      evalu.weight,
+      evalu.points,
+      evalu.weightedPoints);
   }
 
   // Retrieve an evaluation for a student at a given zero-based index
   function getEvaluationByStudentID(uint32 studentID, uint64 index) public view
-    returns (uint32 recorderID, uint32 activity, uint8 complexity, uint8 effort, uint8 weight, uint8 points, uint8 weightedPoints)
+    returns (uint32 recorderID, address recorderAddress, uint32 activity, uint8 complexity, uint8 effort, uint8 weight, uint8 points, uint8 weightedPoints)
   {
     Evaluation storage evalu = evaluations[evaluationsByStudentID[studentID][index]];
-    return(evalu.recorderID, evalu.activity, evalu.complexity, evalu.effort, evalu.weight, evalu.points, evalu.weightedPoints);
+    return(
+      evalu.recorderID,
+      getRecorderAddress(evalu.recorderID),
+      evalu.activity,
+      evalu.complexity,
+      evalu.effort,
+      evalu.weight,
+      evalu.points,
+      evalu.weightedPoints);
   }
 
   // Internal function for the generation of a recorder ID. The recorder is the sender
