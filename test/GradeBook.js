@@ -80,44 +80,71 @@ contract('GradeBook', (accounts) => {
         // check that the number of evaluations for this student is correct
         (await gradeBook.getEvaluationCountByStudentID(studentID)).toNumber().should.be.equal(studentIndex + 1);
 
-        // compare the evaluation recorded with the three retrieval methods:
-        // all evaluations, via Recorder ID, and via Student ID
-        let result0 = await gradeBook.evaluations(recIndex);
+        // compare the evaluation recorded with the four retrieval methods:
+        // all evaluations, via Recorder ID, via Student ID, and via array accessor
+        // these three all return the same parameters (including decoded recorder and student IDs)
+        let result0 = await gradeBook.getEvaluation(recIndex);
         let result1 = await gradeBook.getEvaluationByRecorderID(recorderID, recIndex);
         let result2 = await gradeBook.getEvaluationByStudentID(studentID, studentIndex);
-        let result3 = await gradeBook.getEvaluation(recIndex);
-        // Orders are different because ByRecorder and ByStudent don't return the
-        // fields they are queried by, and `evaluations` returns all fields
-        result0[0].toNumber().should.be.equal(recorderID);
-        result2[0].toNumber().should.be.equal(recorderID);
+        // the array accessor does not return the index or decoded IDs
+        let result3 = await gradeBook.evaluations(recIndex);
+
+        result0[0].toNumber().should.be.equal(recIndex);
+        result1[0].toNumber().should.be.equal(recIndex);
+        result2[0].toNumber().should.be.equal(recIndex);
+        // result3: array accessor does not return its own index
+
+        result0[1].toNumber().should.be.equal(recorderID);
+        result1[1].toNumber().should.be.equal(recorderID);
+        result2[1].toNumber().should.be.equal(recorderID);
         result3[0].toNumber().should.be.equal(recorderID);
-        result0[1].toNumber().should.be.equal(studentID);
-        result1[0].toNumber().should.be.equal(studentID);
-        result3[2].toNumber().should.be.equal(studentID);
-        result0[2].toNumber().should.be.equal(rec.id_oa);
-        result1[2].toNumber().should.be.equal(rec.id_oa);
-        result2[2].toNumber().should.be.equal(rec.id_oa);
-        result3[4].toNumber().should.be.equal(rec.id_oa);
-        result0[3].should.be.bignumber.equal(norm(rec.complejidad_oa));
-        result1[3].should.be.bignumber.equal(norm(rec.complejidad_oa));
-        result2[3].should.be.bignumber.equal(norm(rec.complejidad_oa));
-        result3[5].should.be.bignumber.equal(norm(rec.complejidad_oa));
-        result0[4].should.be.bignumber.equal(norm(rec.esfuerzo_oa));
-        result1[4].should.be.bignumber.equal(norm(rec.esfuerzo_oa));
-        result2[4].should.be.bignumber.equal(norm(rec.esfuerzo_oa));
-        result3[6].should.be.bignumber.equal(norm(rec.esfuerzo_oa));
-        result0[5].should.be.bignumber.equal(norm(rec.peso_oa));
-        result1[5].should.be.bignumber.equal(norm(rec.peso_oa));
-        result2[5].should.be.bignumber.equal(norm(rec.peso_oa));
-        result3[7].should.be.bignumber.equal(norm(rec.peso_oa));
-        result0[6].should.be.bignumber.equal(norm(rec.puntos));
-        result1[6].should.be.bignumber.equal(norm(rec.puntos));
-        result2[6].should.be.bignumber.equal(norm(rec.puntos));
-        result3[8].should.be.bignumber.equal(norm(rec.puntos));
-        result0[7].should.be.bignumber.equal(norm(rec.puntos_pond));
-        result1[7].should.be.bignumber.equal(norm(rec.puntos_pond));
-        result2[7].should.be.bignumber.equal(norm(rec.puntos_pond));
-        result3[9].should.be.bignumber.equal(norm(rec.puntos_pond));
+
+        let recorderAddress = await gradeBook.getRecorderAddress(recorderID);
+        result0[2].should.be.equal(recorderAddress);
+        result1[2].should.be.equal(recorderAddress);
+        result2[2].should.be.equal(recorderAddress);
+        // result3: array accessor does not return decoded ID
+
+        result0[3].toNumber().should.be.equal(studentID);
+        result1[3].toNumber().should.be.equal(studentID);
+        result2[3].toNumber().should.be.equal(studentID);
+        result3[1].toNumber().should.be.equal(studentID);
+
+        let studentIDText = await gradeBook.getStudentIDText(studentID);
+        result0[4].should.be.equal(studentIDText);
+        result1[4].should.be.equal(studentIDText);
+        result2[4].should.be.equal(studentIDText);
+        // result3: array accessor does not return decoded ID
+
+        result0[5].toNumber().should.be.equal(rec.id_oa);
+        result1[5].toNumber().should.be.equal(rec.id_oa);
+        result2[5].toNumber().should.be.equal(rec.id_oa);
+        result3[2].toNumber().should.be.equal(rec.id_oa);
+
+        result0[6].should.be.bignumber.equal(norm(rec.complejidad_oa));
+        result1[6].should.be.bignumber.equal(norm(rec.complejidad_oa));
+        result2[6].should.be.bignumber.equal(norm(rec.complejidad_oa));
+        result3[3].should.be.bignumber.equal(norm(rec.complejidad_oa));
+
+        result0[7].should.be.bignumber.equal(norm(rec.esfuerzo_oa));
+        result1[7].should.be.bignumber.equal(norm(rec.esfuerzo_oa));
+        result2[7].should.be.bignumber.equal(norm(rec.esfuerzo_oa));
+        result3[4].should.be.bignumber.equal(norm(rec.esfuerzo_oa));
+
+        result0[8].should.be.bignumber.equal(norm(rec.peso_oa));
+        result1[8].should.be.bignumber.equal(norm(rec.peso_oa));
+        result2[8].should.be.bignumber.equal(norm(rec.peso_oa));
+        result3[5].should.be.bignumber.equal(norm(rec.peso_oa));
+
+        result0[9].should.be.bignumber.equal(norm(rec.puntos));
+        result1[9].should.be.bignumber.equal(norm(rec.puntos));
+        result2[9].should.be.bignumber.equal(norm(rec.puntos));
+        result3[6].should.be.bignumber.equal(norm(rec.puntos));
+
+        result0[10].should.be.bignumber.equal(norm(rec.puntos_pond));
+        result1[10].should.be.bignumber.equal(norm(rec.puntos_pond));
+        result2[10].should.be.bignumber.equal(norm(rec.puntos_pond));
+        result3[7].should.be.bignumber.equal(norm(rec.puntos_pond));
       }
     });
 

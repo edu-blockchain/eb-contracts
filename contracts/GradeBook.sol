@@ -140,12 +140,13 @@ contract GradeBook {
     return uint64(evaluationsByStudentID[studentID].length);
   }
 
-  // Retrieve an evaluation by a recorder at a given zero-based index
-  function getEvaluation(uint64 index) public view
-    returns (uint32 recorderID, address recorderAddress, uint32 studentID, bytes studentIDText, uint32 activity, uint8 complexity, uint8 effort, uint8 weight, uint8 points, uint8 weightedPoints)
+  // Retrieve an evaluation by evaluation ID (a zero-based index)
+  function getEvaluation(uint64 evaluationID) public view
+    returns (uint64, uint32 recorderID, address recorderAddress, uint32 studentID, bytes studentIDText, uint32 activity, uint8 complexity, uint8 effort, uint8 weight, uint8 points, uint8 weightedPoints)
   {
-    Evaluation storage evalu = evaluations[index];
+    Evaluation storage evalu = evaluations[evaluationID];
     return(
+      evaluationID,
       evalu.recorderID,
       getRecorderAddress(evalu.recorderID),
       evalu.studentID,
@@ -160,10 +161,14 @@ contract GradeBook {
 
   // Retrieve an evaluation by a recorder at a given zero-based index
   function getEvaluationByRecorderID(uint32 recorderID, uint64 index) public view
-    returns (uint32 studentID, bytes studentIDText, uint32 activity, uint8 complexity, uint8 effort, uint8 weight, uint8 points, uint8 weightedPoints)
+    returns (uint64 evaluationID, uint32, address recorderAddress, uint32 studentID, bytes studentIDText, uint32 activity, uint8 complexity, uint8 effort, uint8 weight, uint8 points, uint8 weightedPoints)
   {
-    Evaluation storage evalu = evaluations[evaluationsByRecorderID[recorderID][index]];
+    evaluationID = evaluationsByRecorderID[recorderID][index];
+    Evaluation storage evalu = evaluations[evaluationID];
     return(
+      evaluationID,
+      evalu.recorderID,
+      getRecorderAddress(evalu.recorderID),
       evalu.studentID,
       getStudentIDText(evalu.studentID),
       evalu.activity,
@@ -176,12 +181,16 @@ contract GradeBook {
 
   // Retrieve an evaluation for a student at a given zero-based index
   function getEvaluationByStudentID(uint32 studentID, uint64 index) public view
-    returns (uint32 recorderID, address recorderAddress, uint32 activity, uint8 complexity, uint8 effort, uint8 weight, uint8 points, uint8 weightedPoints)
+    returns (uint64 evaluationID, uint32 recorderID, address recorderAddress, uint32, bytes studentIDText, uint32 activity, uint8 complexity, uint8 effort, uint8 weight, uint8 points, uint8 weightedPoints)
   {
-    Evaluation storage evalu = evaluations[evaluationsByStudentID[studentID][index]];
+    evaluationID = evaluationsByStudentID[studentID][index];
+    Evaluation storage evalu = evaluations[evaluationID];
     return(
+      evaluationID,
       evalu.recorderID,
       getRecorderAddress(evalu.recorderID),
+      evalu.studentID,
+      getStudentIDText(evalu.studentID),
       evalu.activity,
       evalu.complexity,
       evalu.effort,
