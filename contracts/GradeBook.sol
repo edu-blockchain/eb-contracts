@@ -43,7 +43,7 @@ contract GradeBook {
   mapping(uint32 => uint64[]) internal evaluationsByRecorderID;
 
   // Constructor
-  function GradeBook() public {
+  constructor() public {
     studentCount = 0;
     recorderCount = 0;
   }
