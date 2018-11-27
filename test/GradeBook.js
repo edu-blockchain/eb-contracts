@@ -159,7 +159,7 @@ contract('GradeBook', (accounts) => {
 
     it('should allow numeric student IDs', async () => {
       await gradeBook.makeStudentID(web3.fromUtf8('4444'), { from: evaluator });
-      var studentID = (await gradeBook.getStudentCount()).toNumber();
+      let studentID = (await gradeBook.getStudentCount()).toNumber();
       web3.toUtf8(await gradeBook.getStudentIDText(studentID)).should.be.eq('4444');
     });
   });
