@@ -156,5 +156,11 @@ contract('GradeBook', (accounts) => {
       await gradeBook.makeStudentID('duplo', { from: evaluator });
       await expectThrow(gradeBook.makeStudentID('duplo', { from: evaluator }));
     });
+
+    it('should allow numeric student IDs', async () => {
+      await gradeBook.makeStudentID(web3.fromUtf8('4444'), { from: evaluator });
+      var studentID = (await gradeBook.getStudentCount()).toNumber();
+      web3.toUtf8(await gradeBook.getStudentIDText(studentID)).should.be.eq('4444');
+    });
   });
 });
