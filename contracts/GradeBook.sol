@@ -26,14 +26,14 @@ contract GradeBook {
   // student IDs mapped to the external unique identifier
   // this is normalized to minimize the size of the evaluations array.
   mapping(bytes => uint32) internal studentByID;
-  bytes[] internal students;
-  uint32 internal studentCount;
+  bytes[] public students;
+  uint32 public studentCount;
 
   // recorder IDs mapped to the Ethereum address which recorded them
   // this is normalized to minimize the size of the evaluations array.
   mapping(address => uint32) internal recorderByAddress;
-  address[] internal recorders;
-  uint32 internal recorderCount;
+  address[] public recorders;
+  uint32 public recorderCount;
 
   // evaluations stored in a public array
   // accessible through the implicit evaluations() function.
@@ -123,6 +123,24 @@ contract GradeBook {
 
     // Send an event for this evaluation
     emit EvaluationRecorded(recorderID, studentID, activity, evaluationID);
+  }
+
+  function recordEvaluationForStudentIDText(
+    bytes studentIDText,
+    uint32 activity,
+    uint8 complexity,
+    uint8 effort,
+    uint8 weight,
+    uint8 points,
+    uint8 weightedPoints) public
+    {
+    uint32 studentID = getStudentID(studentIDText);
+
+    if (studentID == 0 ) {
+      studentID = makeStudentID(studentIDText);
+    }
+
+    recordEvaluation(studentID, activity, complexity, effort, weight, points, weightedPoints);
   }
 
   // Retrieve the total number of evaluations

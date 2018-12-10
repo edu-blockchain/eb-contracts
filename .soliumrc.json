@@ -15,7 +15,7 @@
     ],
     "arg-overflow": [
       "warning",
-      5
+      7
     ]
   }
 }

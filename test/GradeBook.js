@@ -38,8 +38,6 @@ contract('GradeBook', (accounts) => {
         // get the student ID or make one
         let studentID = (await gradeBook.getStudentID(rec.id_alumno)).toNumber();
         if (studentID === 0) {
-          // This should work in one call, but for whatever reason it doesn't
-          // studentID = (await gradeBook.makeStudentID(rec.id_alumno)).toNumber();
           await gradeBook.makeStudentID(rec.id_alumno, { from: evaluator });
           studentID = (await gradeBook.getStudentID(rec.id_alumno)).toNumber();
           studentIndex = 0;
@@ -161,6 +159,23 @@ contract('GradeBook', (accounts) => {
       await gradeBook.makeStudentID(web3.fromUtf8('4444'), { from: evaluator });
       let studentID = (await gradeBook.getStudentCount()).toNumber();
       web3.toUtf8(await gradeBook.getStudentIDText(studentID)).should.be.eq('4444');
+    });
+
+    it('should allow creation of a student ID with the evaluation', async () => {
+      await gradeBook.recordEvaluationForStudentIDText(web3.fromUtf8('uv808'), 0, 1, 2, 3, 4, 5, { from: evaluator });
+      let studentID = (await gradeBook.getStudentID('uv808')).toNumber();
+      studentID.should.be.gt(0);
+      (await gradeBook.getEvaluationCountByStudentID(studentID)).toNumber().should.be.eq(1);
+      let result = await gradeBook.getEvaluationByStudentID(studentID, 0);
+      result[5].toNumber().should.be.eq(0);
+      result[6].toNumber().should.be.eq(1);
+      result[7].toNumber().should.be.eq(2);
+      result[8].toNumber().should.be.eq(3);
+      result[9].toNumber().should.be.eq(4);
+      result[10].toNumber().should.be.eq(5);
+      // a subsequent call should use the existing student ID
+      await gradeBook.recordEvaluationForStudentIDText(web3.fromUtf8('uv808'), 0, 10, 20, 30, 40, 50, { from: evaluator });
+      (await gradeBook.getEvaluationCountByStudentID(studentID)).toNumber().should.be.eq(2);
     });
   });
 });
