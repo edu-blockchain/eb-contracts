@@ -28,6 +28,12 @@ contract('GradeBook', (accounts) => {
   beforeEach(async () => {
   });
 
+  context('zero is not a valid student ID when no students exist', () => {
+    it('should throw for invalid student ID', async () => {
+      await expectThrow(gradeBook.recordEvaluation(0, 1, 2, 3, 4, 5, 6, { from: evaluator }));
+    });
+  });
+
   context('grade recording', () => {
     it('should record grades', async () => {
       let studentIndex = 0;
