@@ -62,6 +62,8 @@ contract GradeBook {
 
   // Retrieve the text-based student identifier based on the student ID
   function getStudentIDText(uint32 studentID) public view returns (bytes) {
+    require(studentID > 0);
+
     // studentID is one-based, array is zero-based
     return students[studentID-1];
   }

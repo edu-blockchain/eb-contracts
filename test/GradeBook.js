@@ -29,7 +29,11 @@ contract('GradeBook', (accounts) => {
   });
 
   context('zero is not a valid student ID when no students exist', () => {
-    it('should throw for invalid student ID', async () => {
+    it('should not retrieve text for invalid student ID', async () => {
+      await expectThrow(gradeBook.getStudentIDText(0));
+    });
+
+    it('should not record evaluation for invalid student ID', async () => {
       await expectThrow(gradeBook.recordEvaluation(0, 1, 2, 3, 4, 5, 6, { from: evaluator }));
     });
   });
