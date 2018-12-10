@@ -20,6 +20,7 @@ contract GradeBook {
 
   modifier onlyValidStudentID(uint32 studentID) {
     require(studentCount > 0);
+    require(studentID != 0);
     require(studentID <= studentCount);
     _;
   }

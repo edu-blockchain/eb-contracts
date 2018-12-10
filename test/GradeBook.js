@@ -187,5 +187,9 @@ contract('GradeBook', (accounts) => {
       await gradeBook.recordEvaluationForStudentIDText(web3.fromUtf8('uv808'), 0, 10, 20, 30, 40, 50, { from: evaluator });
       (await gradeBook.getEvaluationCountByStudentID(studentID)).toNumber().should.be.eq(2);
     });
+
+    it('should not allow student ID 0 with the evaluation', async () => {
+      await expectThrow(gradeBook.recordEvaluation(0, 0, 1, 2, 3, 4, 5, { from: evaluator }));
+    });
   });
 });
